@@ -39,7 +39,7 @@ def give_status(msg):
 
         if status != 'error':
             bot.send_message('753613553',
-                             '''Статус для пользователя <b><i>{0}</i></b> ({1}):\n"<i>{2}</i> (время МСК)"'''.format(
+                             '''Статус для пользователя <b><i>{0}</i></b> ({1}):\n"<i>{2}</i>" (время МСК)'''.format(
                                  status[1], id, status[0]), parse_mode='html')
         else:
             bot.send_message('753613553',
