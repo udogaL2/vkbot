@@ -20,7 +20,9 @@ class P_schedule():
             if status[0] == 'Online':
                 bot.send_message('753613553', '''Пользователь <b><i>{0}</i></b> онлайн!'''.format(status[1]),
                                  parse_mode='html')
-            time.sleep(60 * 5)
+                time.sleep(60 * 10)
+            else:
+                time.sleep(60 * 5)
 
 
 @bot.message_handler(commands=['start'])
