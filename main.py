@@ -15,7 +15,7 @@ def start_process():
 class P_schedule():
     def start_schedule():
         while True:
-            id = 'kkollektor'
+            id = 'ka.terinass'
             status = get_status(id)
             if status[0] == 'Online':
                 bot.send_message('753613553', '''Пользователь <b><i>{0}</i></b> онлайн!'''.format(status[1]),
