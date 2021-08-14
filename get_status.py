@@ -2,7 +2,8 @@ import requests
 from bs4 import BeautifulSoup as BS
 
 
-def get_status(id):
+def get_status(id: str):
+    id = id.strip().lower()
     r = requests.get('https://vk.com/{0}'.format(id))
 
     if r.status_code == 200:
