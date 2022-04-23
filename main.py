@@ -8,24 +8,30 @@ bot = telebot.TeleBot('1957915766:AAFMZqJIT9aW1YNU0Dpb-zWeiswwTVP9-uI')
 id = None
 
 
-def start_process():
-    p1 = Process(target=P_schedule.start_schedule, args=())
-    p1.start()
+def proc_start():
+    p_to_start = Process(target=start_schedule, args=(id,))
+    p_to_start.start()
+    return p_to_start
 
 
-class P_schedule():
-    def start_schedule():
-        while True:
-            if id:
-                status = get_status(id)
-                if status[0] == 'Online':
-                    bot.send_message('753613553', '''Пользователь <b><i>{0}</i></b> онлайн!'''.format(status[1]),
-                                     parse_mode='html')
-                    time.sleep(60 * 10)
-                else:
-                    time.sleep(60 * 5)
+def proc_stop(p_to_stop):
+    p_to_stop.terminate()
+
+
+def start_schedule(id):
+    while True:
+        if id is not None:
+            status = get_status(id)
+            if status[0] == 'Online':
+                bot.send_message('753613553', '''Пользователь <b><i>{0}</i></b> онлайн!'''.format(status[1]),
+                                 parse_mode='html')
+                time.sleep(60 * 10)
             else:
-                pass
+                time.sleep(60 * 5)
+        else:
+            bot.send_message('753613553', 'Цель отсутствует! (/target)',
+                             parse_mode='html')
+            time.sleep(60)
 
 
 @bot.message_handler(commands=['start'])
@@ -37,9 +43,23 @@ def welcome(msg):
 
 
 @bot.message_handler(commands=['target'])
-def welcome(msg):
-    bot.send_message(msg.chat.id, 'Обновлена цель: {0}'.format(msg.text), parse_mode='html')
-    id = msg.text
+def target(msg):
+    global id, pr
+    id = msg.text.split('/target ')[1]
+    if not id:
+        bot.send_message(msg.chat.id, 'Пустое сообщение'.format(msg.text.split('/target ')[1]), parse_mode='html')
+    else:
+        status = get_status(id)
+        if status != 'error':
+            bot.send_message(msg.chat.id, 'Обновлена цель: {0}'.format(msg.text.split('/target ')[1]),
+                             parse_mode='html')
+            proc_stop(pr)
+            pr = proc_start()
+
+        else:
+            bot.send_message(msg.chat.id,
+                             '''Произошла ошибка: пользователь не найден или не удалось обработать запрос.''')
+            id = None
 
 
 @bot.message_handler(content_types=['text'])
@@ -60,7 +80,7 @@ def give_status(msg):
 
 
 if __name__ == '__main__':
-    start_process()
+    pr = proc_start()
     try:
         bot.polling(none_stop=True)
     except Exception:
