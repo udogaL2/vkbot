@@ -5,6 +5,7 @@ import time
 from get_status import get_status
 
 bot = telebot.TeleBot('1957915766:AAFMZqJIT9aW1YNU0Dpb-zWeiswwTVP9-uI')
+id = None
 
 
 def start_process():
@@ -15,14 +16,16 @@ def start_process():
 class P_schedule():
     def start_schedule():
         while True:
-            id = 'ka.terinass'
-            status = get_status(id)
-            if status[0] == 'Online':
-                bot.send_message('753613553', '''Пользователь <b><i>{0}</i></b> онлайн!'''.format(status[1]),
-                                 parse_mode='html')
-                time.sleep(60 * 10)
+            if id:
+                status = get_status(id)
+                if status[0] == 'Online':
+                    bot.send_message('753613553', '''Пользователь <b><i>{0}</i></b> онлайн!'''.format(status[1]),
+                                     parse_mode='html')
+                    time.sleep(60 * 10)
+                else:
+                    time.sleep(60 * 5)
             else:
-                time.sleep(60 * 5)
+                pass
 
 
 @bot.message_handler(commands=['start'])
@@ -31,6 +34,12 @@ def welcome(msg):
                      'Добро пожаловать, {0.first_name}, {1}!\nМеня зовут <b>"{2.first_name} - бот"</b>.'.format(
                          msg.from_user, msg.chat.id, bot.get_me()),
                      parse_mode='html')
+
+
+@bot.message_handler(commands=['target'])
+def welcome(msg):
+    bot.send_message(msg.chat.id, 'Обновлена цель: {0}'.format(msg.text), parse_mode='html')
+    id = msg.text
 
 
 @bot.message_handler(content_types=['text'])
